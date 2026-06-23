@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // User documents
+    match /lesson_planner_app/users/{uid} {
+      // Users can read their own document
+      allow read: if request.auth.uid == uid;
+      // Users can write their own document (limited fields)
+      allow write: if request.auth.uid == uid;
+      // Admins can read all users
+      allow read: if isAdmin();
+      // System can create user docs
+      allow create: if request.auth != null;
+    }
+    
+    // Profile documents
+    match /lesson_planner_app/profiles/{profileId} {
+      // Creator can read and write their own profiles
+      allow read, write: if request.auth.uid == resource.data.createdBy && isApproved();
+      // Shared users can read (if their uid is in sharedWith array)
+      allow read: if request.auth.uid in resource.data.sharedWith && isApproved();
+      // Approved users can create new profiles
+      allow create: if isApproved();
+    }
+    
+    // Lesson documents
+    match /lesson_planner_app/lessons/{lessonId} {
+      // Creator can read and write their own lessons
+      allow read, write: if request.auth.uid == resource.data.createdBy && isApproved();
+      // Approved users can create new lessons
+      allow create: if isApproved();
+    }
+    
+    // Audit log documents
+    match /lesson_planner_app/audit/{auditId} {
+      // Only admins can read audit logs
+      allow read: if isAdmin();
+      // Any authenticated user can create audit entries
+      allow create: if request.auth != null;
+    }
+    
+    // Helper functions
+    function isApproved() {
+      let user = getUserData();
+      return user != null && user.status == 'approved';
+    }
+    
+    function isAdmin() {
+      let user = getUserData();
+      return user != null && (user.role == 'admin' || user.role == 'owner');
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/lesson_planner_app/users/$(request.auth.uid)).data;
+    }
+  }
+}
