@@ -118,29 +118,42 @@ export async function getUserData(uid) {
 export function subscribeToAuthState(callback) {
   console.log('📡 Setting up auth state listener...');
   
-  return onAuthStateChanged(auth, async (user) => {
-    console.log('👤 Auth state changed:', user ? `User: ${user.email}` : 'No user');
-    
-    if (user) {
-      try {
-        console.log('📋 Fetching user data for:', user.uid);
-        const userData = await getUserData(user.uid);
-        console.log('✅ User data fetched:', userData ? 'Found' : 'Not found');
+  try {
+    return onAuthStateChanged(
+      auth,
+      async (user) => {
+        console.log('👤 Auth state changed:', user ? `User: ${user.email}` : 'No user');
         
-        callback({
-          user,
-          userData,
-          status: userData?.status || 'pending'
-        });
-      } catch (error) {
-        console.error('❌ Error in auth state callback:', error);
+        if (user) {
+          try {
+            console.log('📋 Fetching user data for:', user.uid);
+            const userData = await getUserData(user.uid);
+            console.log('✅ User data fetched:', userData ? 'Found' : 'Not found');
+            
+            callback({
+              user,
+              userData,
+              status: userData?.status || 'pending'
+            });
+          } catch (error) {
+            console.error('❌ Error in auth state callback:', error);
+            callback(null);
+          }
+        } else {
+          console.log('🔓 No authenticated user');
+          callback(null);
+        }
+      },
+      (error) => {
+        console.error('🔴 Auth listener error:', error);
         callback(null);
       }
-    } else {
-      console.log('🔓 No authenticated user');
-      callback(null);
-    }
-  });
+    );
+  } catch (error) {
+    console.error('❌ Failed to set up auth listener:', error);
+    callback(null);
+    return () => {};
+  }
 }
 
 /**

@@ -51,7 +51,7 @@ service cloud.firestore {
     }
     
     function getUserData() {
-      return get(/databases/$(database)/documents/lesson_planner_app/users/$(request.auth.uid)).data;
+      return get(/databases/$(database)/documents/artifacts/apps-e1163/users/$(request.auth.uid)).data;
     }
   }
 }
