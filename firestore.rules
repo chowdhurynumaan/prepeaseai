@@ -1,8 +1,8 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // User documents
-    match /lesson_planner_app/users/{uid} {
+    // User documents in artifacts/apps-e1163
+    match /artifacts/apps-e1163/users/{uid} {
       // Users can read their own document
       allow read: if request.auth.uid == uid;
       // Users can write their own document (limited fields)
@@ -13,8 +13,8 @@ service cloud.firestore {
       allow create: if request.auth != null;
     }
     
-    // Profile documents
-    match /lesson_planner_app/profiles/{profileId} {
+    // Profile documents in artifacts/apps-e1163
+    match /artifacts/apps-e1163/profiles/{profileId} {
       // Creator can read and write their own profiles
       allow read, write: if request.auth.uid == resource.data.createdBy && isApproved();
       // Shared users can read (if their uid is in sharedWith array)
@@ -23,16 +23,16 @@ service cloud.firestore {
       allow create: if isApproved();
     }
     
-    // Lesson documents
-    match /lesson_planner_app/lessons/{lessonId} {
+    // Lesson documents in artifacts/apps-e1163
+    match /artifacts/apps-e1163/lessons/{lessonId} {
       // Creator can read and write their own lessons
       allow read, write: if request.auth.uid == resource.data.createdBy && isApproved();
       // Approved users can create new lessons
       allow create: if isApproved();
     }
     
-    // Audit log documents
-    match /lesson_planner_app/audit/{auditId} {
+    // Audit log documents in artifacts/apps-e1163
+    match /artifacts/apps-e1163/audit/{auditId} {
       // Only admins can read audit logs
       allow read: if isAdmin();
       // Any authenticated user can create audit entries
