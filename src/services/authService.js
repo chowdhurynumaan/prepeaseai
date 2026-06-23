@@ -15,7 +15,7 @@ import {
   serverTimestamp,
   APP_ID,
   COLLECTIONS
-} from './firebase';
+} from '../firebase';
 
 /**
  * Sign in user with Google
