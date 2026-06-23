@@ -84,13 +84,13 @@ export {
 };
 
 // App-specific constants
-export const APP_ID = 'lesson_planner_app';
+export const APP_ID = 'prepease_lessons';
 export const APP_NAME = 'PrepEase AI';
 
-// Firestore collection paths
+// Firestore collection paths - using artifacts/apps-e1163 document structure
 export const COLLECTIONS = {
-  users: `${APP_ID}/users`,
-  profiles: `${APP_ID}/profiles`,
-  lessons: `${APP_ID}/lessons`,
-  audit: `${APP_ID}/audit`
+  users: 'artifacts/apps-e1163/users',
+  profiles: 'artifacts/apps-e1163/profiles',
+  lessons: 'artifacts/apps-e1163/lessons',
+  audit: 'artifacts/apps-e1163/audit'
 };
